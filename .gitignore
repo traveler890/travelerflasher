@@ -1,0 +1,30 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Build outputs
+dist/
+build/
+*.spec
+
+# Virtual environments
+.env/
+.venv/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+*.tmp
+
+# IDE settings
+.vscode/
+.idea/
+
+# TravelerFlasher specific
+assets/*.xcf
+releases/*.json.backup
