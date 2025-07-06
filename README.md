@@ -1,4 +1,9 @@
-# TravelerFlasher
+![TravelerFlasher Logo](assets/traveler-logo.png)
+
+*Flash fast. Travel far.*
+
+[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10+-brightgreen)](https://www.python.org)
 
 A minimalist, open-source utility for flashing TravelerOS ISO images to USB drives with persistent overlay support and UEFI compatibility.
 
