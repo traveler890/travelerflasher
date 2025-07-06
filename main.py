@@ -12,9 +12,6 @@ from PyQt6.QtWidgets import (
     QPushButton, QComboBox, QMessageBox
 )
 
-from PyQt6.QtGui import QPixmap, QIcon
-from PyQt6.QtWidgets import QProgressBar
-
 class TravelerFlasher(QWidget):
     def __init__(self):
         super().__init__()
@@ -62,12 +59,6 @@ class TravelerFlasher(QWidget):
         tagline = QLabel("<i>Flash fast. Travel far.</i>")
         layout.addWidget(tagline)
 
-        # Progress bar
-        self.progress_bar = QProgressBar()
-        self.progress_bar.setRange(0, 100)
-        self.progress_bar.setValue(0)
-        layout.addWidget(self.progress_bar)
-
         
         self.setLayout(layout)
         self.drive_path = None
@@ -87,9 +78,9 @@ class TravelerFlasher(QWidget):
     def update_selected_drive(self):
         self.drive_path = self.drive_picker.currentText()
 
- def download_iso(self, url, output_path):
-    self.status_label.setText("⬇️ Downloading TravelerOS ISO...")
-    self.progress_bar.setValue(0)
+    def download_iso(self, url, output_path):
+        self.status_label.setText("⬇️ Downloading TravelerOS ISO...")
+        self.progress_bar.setValue(0)
     try:
         with requests.get(url, stream=True) as r:
             r.raise_for_status()
@@ -142,3 +133,44 @@ class TravelerFlasher(QWidget):
             self.status_label.setText("✅ TravelerOS flashed successfully!")
         else:
             self.status_label.setText("❌ Flashing failed.")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    TRAVELER_STYLE = """ 
+    QWidget {
+        background-color: #1f2632;
+        color: #e3e3e3;
+        font-family: Segoe UI, sans-serif;
+        font-size: 13px;
+    }
+    QPushButton {
+        background-color: #ff8c42;
+        color: black;
+        padding: 6px;
+        border-radius: 5px;
+    }
+    QPushButton:hover {
+        background-color: #ffa75a;
+    }
+    QComboBox, QLabel {
+        color: #e3e3e3;
+    }
+    QProgressBar {
+        border: 1px solid #555;
+        border-radius: 5px;
+        background-color: #2e3440;
+        text-align: center;
+    }
+    QProgressBar::chunk {
+        background-color: #fcba03;
+        width: 10px;
+    }
+    """
+
+    app.setStyleSheet(TRAVELER_STYLE)
+
+    window = TravelerFlasher()
+    window.show()
+    sys.exit(app.exec())
+
