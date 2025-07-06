@@ -1,3 +1,14 @@
+import os
+import sys
+import requests
+import psutil
+from utils.iso_tools import sha256_file
+from utils.flash_core import flash_iso_to_drive
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QLabel,
+    QPushButton, QComboBox, QMessageBox
+)
+
 class TravelerFlasher(QWidget):
     def __init__(self):
         super().__init__()
@@ -45,3 +56,54 @@ class TravelerFlasher(QWidget):
     def update_selected_drive(self):
         self.drive_path = self.drive_picker.currentText()
 
+  def download_iso(self, url, output_path):
+        self.status_label.setText("⬇️ Downloading TravelerOS ISO...")
+        try:
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                total_size = int(r.headers.get('content-length', 0))
+                downloaded = 0
+
+                with open(output_path, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if chunk:
+                            f.write(chunk)
+                            downloaded += len(chunk)
+                            percent = int(downloaded * 100 / total_size)
+                            self.status_label.setText(f"📦 Downloading... {percent}%")
+            return True
+        except Exception as e:
+            self.status_label.setText(f"❌ Download error: {e}")
+            return False
+
+    def flash_iso(self):
+        if not self.drive_path:
+            QMessageBox.warning(self, "No Drive", "Please select a USB drive first.")
+            return
+
+        index = self.version_picker.currentIndex()
+        if index < 0 or index >= len(self.version_data):
+            QMessageBox.warning(self, "Invalid Selection", "Please select a valid TravelerOS version.")
+            return
+
+        release = self.version_data[index]
+        iso_url = release.get("url")
+        iso_hash = release.get("sha256")
+        iso_name = release.get("name")
+        output_iso = os.path.join(os.getcwd(), "TravelerOS-temp.iso")
+
+        if not self.download_iso(iso_url, output_iso):
+            return
+
+        actual_hash = sha256_file(output_iso)
+        if actual_hash != iso_hash:
+            QMessageBox.warning(self, "Hash Mismatch", "ISO checksum does not match! Aborting.")
+            self.status_label.setText("❌ Hash mismatch.")
+            return
+        self.status_label.setText("✅ ISO verified.")
+
+        success = flash_iso_to_drive(output_iso, self.drive_path)
+        if success:
+            self.status_label.setText("✅ TravelerOS flashed successfully!")
+        else:
+            self.status_label.setText("❌ Flashing failed.")
