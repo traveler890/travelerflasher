@@ -64,16 +64,21 @@ class TravelerFlasher(QWidget):
         self.drive_path = None
         self.fetch_versions()
 
-    def populate_drives(self):
-        self.drive_picker.clear()
-        drives = get_removable_drives()
-        if drives:
-            for d in drives:
-                self.drive_picker.addItem(d)
-            self.status_label.setText("✅ Removable drives detected.")
-        else:
-            self.drive_picker.addItem("No removable drives found")
-            self.status_label.setText("⚠️ No drives available.")
+from utils.drive_info import get_removable_drives
+
+def populate_drives(self):
+    self.drive_picker.clear()
+    drives = get_removable_drives()
+    if drives:
+        for d in drives:
+            label = get_drive_label(d["device"])
+            size = get_drive_size(d["mountpoint"])
+            label_str = f"{d['device']} ({label}, {int(size/1e9)} GB)"
+            self.drive_picker.addItem(label_str)
+        self.status_label.setText("✅ Removable drives detected.")
+    else:
+        self.drive_picker.addItem("No removable drives found")
+        self.status_label.setText("⚠️ No drives available.")
 
     def update_selected_drive(self):
         self.drive_path = self.drive_picker.currentText()
