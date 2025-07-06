@@ -1,4 +1,4 @@
-![TravelerFlasher Logo](assets/traveler-logo.png)
+![TravelerFlasher Logo](assets/travelerflasher-logo.png)
 
 *Flash fast. Travel far.*
 
