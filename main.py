@@ -38,6 +38,14 @@ class TravelerFlasher(QWidget):
         self.status_label = QLabel("Status: Awaiting input.")
         layout.addWidget(self.status_label)
 
+        from PyQt6.QtWidgets import QProgressBar  # add to your imports
+
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, 100)
+        self.progress_bar.setValue(0)
+        layout.addWidget(self.progress_bar)
+
+
         self.setLayout(layout)
         self.drive_path = None
         self.fetch_versions()
@@ -56,25 +64,29 @@ class TravelerFlasher(QWidget):
     def update_selected_drive(self):
         self.drive_path = self.drive_picker.currentText()
 
-  def download_iso(self, url, output_path):
-        self.status_label.setText("⬇️ Downloading TravelerOS ISO...")
-        try:
-            with requests.get(url, stream=True) as r:
-                r.raise_for_status()
-                total_size = int(r.headers.get('content-length', 0))
-                downloaded = 0
+ def download_iso(self, url, output_path):
+    self.status_label.setText("⬇️ Downloading TravelerOS ISO...")
+    self.progress_bar.setValue(0)
+    try:
+        with requests.get(url, stream=True) as r:
+            r.raise_for_status()
+            total_size = int(r.headers.get('content-length', 0))
+            downloaded = 0
 
-                with open(output_path, 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        if chunk:
-                            f.write(chunk)
-                            downloaded += len(chunk)
-                            percent = int(downloaded * 100 / total_size)
-                            self.status_label.setText(f"📦 Downloading... {percent}%")
-            return True
-        except Exception as e:
-            self.status_label.setText(f"❌ Download error: {e}")
-            return False
+            with open(output_path, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        f.write(chunk)
+                        downloaded += len(chunk)
+                        percent = int(downloaded * 100 / total_size)
+                        self.status_label.setText(f"📦 Downloading... {percent}%")
+                        self.progress_bar.setValue(percent)
+        self.progress_bar.setValue(100)
+        return True
+    except Exception as e:
+        self.status_label.setText(f"❌ Download error: {e}")
+        self.progress_bar.setValue(0)
+        return False
 
     def flash_iso(self):
         if not self.drive_path:
