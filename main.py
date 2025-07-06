@@ -1,3 +1,6 @@
+from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtWidgets import QProgressBar
+
 import os
 import sys
 import requests
@@ -8,6 +11,9 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel,
     QPushButton, QComboBox, QMessageBox
 )
+
+from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtWidgets import QProgressBar
 
 class TravelerFlasher(QWidget):
     def __init__(self):
@@ -38,14 +44,31 @@ class TravelerFlasher(QWidget):
         self.status_label = QLabel("Status: Awaiting input.")
         layout.addWidget(self.status_label)
 
-        from PyQt6.QtWidgets import QProgressBar  # add to your imports
-
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 100)
         self.progress_bar.setValue(0)
         layout.addWidget(self.progress_bar)
 
+        # App icon (optional for window & PyInstaller)
+        self.setWindowIcon(QIcon("assets/traveler-logo.png"))
 
+        # Logo banner
+        banner = QLabel()
+        pixmap = QPixmap("assets/traveler-logo.png")
+        banner.setPixmap(pixmap.scaledToHeight(64))
+        layout.addWidget(banner)
+
+        # Tagline
+        tagline = QLabel("<i>Flash fast. Travel far.</i>")
+        layout.addWidget(tagline)
+
+        # Progress bar
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, 100)
+        self.progress_bar.setValue(0)
+        layout.addWidget(self.progress_bar)
+
+        
         self.setLayout(layout)
         self.drive_path = None
         self.fetch_versions()
