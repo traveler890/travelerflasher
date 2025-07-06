@@ -1,0 +1,18 @@
+{
+  "releases": [
+    {
+      "name": "TravelerOS Aether",
+      "version": "3.1",
+      "codename": "Aether",
+      "url": "https://github.com/traveler890/traveler/releases/download/stable/traveler3-aether-kde-amd64.iso",
+      "sha256": "d02db68bf395c1ccf96b97b025469c0d4ab503160dc71c8cf654ba314403db11"
+    },
+    {
+      "name": "TravelerOS Zippy",
+      "version": "2",
+      "codename": "Zippy",
+      "url": "https://github.com/traveleros/traveler/releases/download/stable/traveler2-zippy-kde-amd64.iso",
+      "sha256": "0354d1c27600a7e97aae25599d5923739483040e68d59cc1924aae6a8ca838dc"
+    }
+  ]
+}
